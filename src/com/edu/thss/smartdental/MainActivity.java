@@ -6,11 +6,9 @@ import com.edu.thss.smartdental.ui.drawer.NavDrawerItem;
 import com.edu.thss.smartdental.ui.drawer.NavDrawerListAdapter;
 
 
-
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.content.res.TypedArray;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -41,7 +39,6 @@ public class MainActivity extends FragmentActivity implements OnItemClickListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_main);
 		
 		findView();
@@ -70,7 +67,8 @@ public class MainActivity extends FragmentActivity implements OnItemClickListene
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[5],mNavMenuIconsTypeArray.getResourceId(5, -1)));
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[6],mNavMenuIconsTypeArray.getResourceId(6, -1)));
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[7],mNavMenuIconsTypeArray.getResourceId(7, -1)));
-	
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[8],mNavMenuIconsTypeArray.getResourceId(8, -1)));
+		
 		mNavMenuIconsTypeArray.recycle();
 		
 		mAdapter = new NavDrawerListAdapter(getApplicationContext(),mNavDrawerItems);
@@ -142,6 +140,9 @@ public class MainActivity extends FragmentActivity implements OnItemClickListene
 			fragment = new DataFragment();
 			break;
 		case 7: 
+			fragment = new BillFragment();
+			break;
+		case 8: 
 			fragment = new SettingFragment();
 			break;
 		default: break;

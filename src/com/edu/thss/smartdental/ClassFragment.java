@@ -30,7 +30,7 @@ public class ClassFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 				
-				Intent intent = new Intent(getActivity(), LineChartActivity.class);
+				Intent intent = new Intent(getActivity(),MyTestActivity.class);
 				intent.putExtra("data",ok.getText() );
 				startActivityForResult(intent,REQUEST_CODE);
 			}});

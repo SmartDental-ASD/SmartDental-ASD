@@ -2,7 +2,6 @@ package com.edu.thss.smartdental;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -50,6 +49,7 @@ public class OneImageActivity extends Activity implements OnTouchListener,OnClic
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_one_image);
+		
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_bg));
 		imgView = (ImageView)findViewById(R.id.one_image_view);
 		//bitmap = BitmapFactory.decodeResource(getResources(), this.getIntent().getExtras().getInt("IMG")); //获取图片资源
