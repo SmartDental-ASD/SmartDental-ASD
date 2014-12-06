@@ -65,8 +65,13 @@
             android:label="@string/title_activity_my_test" >
         </activity>
         <activity
+<<<<<<< HEAD
             android:name=".BillDetailActivity"
             android:label="@string/title_activity_bill_detail" >
+=======
+            android:name=".LineChartActivity"
+            android:label="@string/title_activity_line_chart" >
+>>>>>>> 18336e5e1cdf2d81143234ccb46fffbcb777f722
         </activity>
     </application>
 

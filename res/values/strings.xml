@@ -18,6 +18,10 @@
     <string name="title_activity_oneday_appoint">个人预约查看</string>
     <string name="title_activity_my_test">MyTestActivity</string>
     <string name="title_activity_bill_fragment">BillFragment</string>
+<<<<<<< HEAD
     <string name="title_activity_bill_detail">BillDetailActivity</string>
+=======
+    <string name="title_activity_line_chart">我的账单</string>
+>>>>>>> 18336e5e1cdf2d81143234ccb46fffbcb777f722
 
 </resources>
