@@ -18,5 +18,6 @@
     <string name="title_activity_oneday_appoint">个人预约查看</string>
     <string name="title_activity_my_test">MyTestActivity</string>
     <string name="title_activity_bill_fragment">BillFragment</string>
+    <string name="title_activity_bill_detail">BillDetailActivity</string>
 
 </resources>

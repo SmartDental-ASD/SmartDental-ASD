@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  
-    xmlns:android="http://schemas.android.com/apk/res/android"  
-    android:id="@+id/bill_list01"  
-    android:layout_width="match_parent"  
-    android:layout_height="wrap_content"  
-    android:paddingBottom="4dip"  
-    android:paddingLeft="12dip" 
-    android:paddingRight="12dip">
-    <TextView  
-    android:text="2013-1-1 账单"  
-    android:layout_height="wrap_content"  
-    android:layout_marginTop="30dip"
-    android:textSize="20sp"  
-    android:paddingLeft="12dip"
-    android:paddingRight="12dip"
-    android:textColor="#000000"
-    android:layout_width="fill_parent"  
-    android:id="@+id/ItemTitle" 
-    /> 
-	
-</RelativeLayout>
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:background="#ffffff"
+     android:descendantFocusability="blocksDescendants"
+     android:gravity="center_vertical">
+     <TextView
+         android:id="@+id/bill_item_title" 
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:textSize="18sp"
+         android:textColor="#000000"
+         android:textStyle="bold"
+         android:text="name"
+         android:layout_toLeftOf="@+id/appoint_item_start"
+         android:layout_alignParentLeft="true"
+         android:layout_marginLeft="10dp"
+         android:paddingTop="10dp"
+         />
+     <TextView
+         android:id="@+id/bill_item_date"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:textSize="12sp"
+         android:textColor="#CCCCCC"
+         android:layout_alignLeft="@+id/bill_item_title"
+         android:text="2014-5-15"
+         android:layout_below="@+id/bill_item_title"
+         />
+     <TextView
+         android:id="@+id/bill_item_cost"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:textColor="#123456"
+         android:textSize="22sp"
+         android:text="$20"
+         android:layout_alignParentRight="true"
+         android:layout_marginRight="10dp"
+         android:layout_alignBottom="@+id/bill_item_date"
+         android:layout_marginBottom="5dp"
+         />
+ </RelativeLayout>

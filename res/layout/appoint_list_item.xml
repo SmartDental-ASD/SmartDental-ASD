@@ -6,7 +6,6 @@
      android:background="#ffffff"
      android:descendantFocusability="blocksDescendants"
      android:gravity="center_vertical"
-     
      >
      <TextView
          android:id="@+id/appoint_item_title" 

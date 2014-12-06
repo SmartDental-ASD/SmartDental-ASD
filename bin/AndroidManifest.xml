@@ -64,6 +64,10 @@
             android:name=".MyTestActivity"
             android:label="@string/title_activity_my_test" >
         </activity>
+        <activity
+            android:name=".BillDetailActivity"
+            android:label="@string/title_activity_bill_detail" >
+        </activity>
     </application>
 
 </manifest>

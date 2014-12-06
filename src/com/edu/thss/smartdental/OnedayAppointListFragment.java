@@ -153,12 +153,4 @@ public class OnedayAppointListFragment extends Fragment implements OnSlideListen
         }
 		
 	}
-
-	
-
-
-
-
-
-	
-	}
+}
