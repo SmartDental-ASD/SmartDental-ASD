@@ -267,13 +267,6 @@ public class LineChartView extends View {
 		paint.setColor(Color.BLUE);
 		paint.setStrokeWidth(7);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
-		for (Account account:data) {
-			tmp = df.parse(account.time.substring(0,10));
-			if (tmp.before(min_date)) min_date = tmp;
-			if (tmp.after(max_date)) max_date = tmp;
-			if (account.firstTotal > max_tot) max_tot = (float)account.firstTotal;
-			if (account.finalTotal < min_tot) min_tot = (float)account.finalTotal;
-		}
 		int len = data.length;
 		int i = 0;
 		//Merge account with same time field
@@ -292,6 +285,14 @@ public class LineChartView extends View {
 				i++;
 			}
  		}
+		for (i = 0; i < len; i++) {
+			Account account = data[i];
+			tmp = df.parse(account.time.substring(0,10));
+			if (tmp.before(min_date)) min_date = tmp;
+			if (tmp.after(max_date)) max_date = tmp;
+			if (account.firstTotal > max_tot) max_tot = (float)account.firstTotal;
+			if (account.finalTotal < min_tot) min_tot = (float)account.finalTotal;
+		}
 		DateTime min_datetime, max_datetime, tmp_datetime;
 		min_datetime = new DateTime(min_date);
 		max_datetime = new DateTime(max_date);
@@ -344,8 +345,13 @@ public class LineChartView extends View {
 			tmp_datetime = new DateTime(tmp);
 			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
 			float _x = 70 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			if (i==1 && Days.daysBetween(min_datetime, tmp_datetime).getDays()*0.8*contentWidth/max_duration < paint.measureText(data[i].time.substring(5,10))*1.5 + 10) continue;
+			if (i==len-2 && Days.daysBetween(tmp_datetime, new DateTime(df.parse(data[i+1].time.substring(0,10)))).getDays()*0.8*contentWidth/max_duration < paint.measureText(data[i].time.substring(5,10))*1.5 + 10) continue;
 			if (i==0 || i==len-1 || Days.daysBetween(new DateTime(df.parse(data[i-1].time.substring(0,10))), tmp_datetime).getDays()*0.8*contentWidth/max_duration > paint.measureText(data[i].time.substring(5,10)) + 10)
-				canvas.drawText(data[i].time.substring(5,10), _x - paint.measureText(data[i].time.substring(5,10))/2, contentHeight, paint);
+				if (i==0||i==len-1)
+					canvas.drawText(data[i].time.substring(0,10), _x - paint.measureText(data[i].time.substring(0,10))/2, contentHeight, paint);
+				else 
+					canvas.drawText(data[i].time.substring(5,10), _x - paint.measureText(data[i].time.substring(5,10))/2, contentHeight, paint);
 		}
 		for (i = 0; i < len * 2 - 1; i++) {
 			for (int j = i + 1; j < len * 2; j++) {
@@ -357,9 +363,25 @@ public class LineChartView extends View {
 			}
 		}
 		contentHeight -= 30;
-		for (i = 0; i < len * 2; i++) {
+		len *= 2;
+		i = 0;
+		while (i < len - 1) {
+			if (tot[i] == tot[i+1]) {
+				int j = i+1;
+				while (j < len-1) {
+					tot[j] = tot[j+1];
+					j++;
+				}
+				len--;
+			}
+			else {
+				i++;
+			}
+ 		}		
+		for (i = 0; i < len; i++) {
 			float _y = contentHeight*(float)0.9 - (tot[i] - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
-			if (i==0 || i==len*2-1 || (tot[i] - tot[i-1]) * contentHeight * (float)0.8 / (max_tot - min_tot) > 15)
+			if (i==len-2 && (tot[i+1] - tot[i]) * contentHeight * (float)0.8 / (max_tot - min_tot) < 30) continue;
+			if (i==0 || i==len-1 || (tot[i] - tot[i-1]) * contentHeight * (float)0.8 / (max_tot - min_tot) > 30)
 				canvas.drawText(Float.toString(tot[i]), 60 - paint.measureText(Float.toString(tot[i])), _y+(float)12.5, paint);
 		}
 	}
