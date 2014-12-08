@@ -300,6 +300,10 @@ public class LineChartView extends View {
 			min_datetime = min_datetime.minusDays(1);
 			max_datetime = max_datetime.plusDays(1);
 		}
+		if (min_tot == max_tot) {
+			min_tot -= 1;
+			max_tot += 1;
+		}
 		int max_duration = Days.daysBetween(min_datetime, max_datetime).getDays();
 		float x = 0;
 		float y = 0;
