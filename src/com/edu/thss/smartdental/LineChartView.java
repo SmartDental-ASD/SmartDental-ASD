@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.R.bool;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -19,11 +20,14 @@ import android.view.View;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+
+import com.edu.thss.smartdental.model.general.parseJson;
+import com.edu.thss.smartdental.model.general.parseJson.Account;
 /**
  * TODO: document your custom view class.
  */
 public class LineChartView extends View {
-	private String mExampleString; // TODO: use a default from R.string...
+	public String mExampleString; // TODO: use a default from R.string...
 	private int mExampleColor = Color.RED; // TODO: use a default from
 											// R.color...
 	private float mExampleDimension = 0; // TODO: use a default from R.dimen...
@@ -203,49 +207,45 @@ public class LineChartView extends View {
 		Paint paint = new Paint();
 		paint.setColor(0xff00ffff);
 		paint.setStrokeWidth(5);
-		canvas.drawLine(10, 0, 10, contentHeight, paint);
-		canvas.drawLine(10, 0, 0, 15, paint);
-		canvas.drawLine(10, 0, 20, 15, paint);
+		canvas.drawLine(70, 0, 70, contentHeight, paint);
+		canvas.drawLine(70, 0, 60, 15, paint);
+		canvas.drawLine(70, 0, 80, 15, paint);
 		//paint.setStrokeWidth(9);
-		canvas.drawLine(10, contentHeight - 30, contentWidth, contentHeight - 30, paint);
+		canvas.drawLine(70, contentHeight - 30, contentWidth, contentHeight - 30, paint);
 		paint.setStrokeWidth(3);
 		paint.setColor(0xff00ffff);
 		contentHeight -= 30;
 		for (int i = 0; i < 5; i++) {
-			canvas.drawLine(10, contentHeight*(float)0.1+contentHeight*(float)0.2*i, contentWidth, contentHeight*(float)0.1+contentHeight*(float)0.2*i, paint);
+			canvas.drawLine(70, contentHeight*(float)0.1+contentHeight*(float)0.2*i, contentWidth, contentHeight*(float)0.1+contentHeight*(float)0.2*i, paint);
 		}
 	}
 	
-	class drug {
-		int medicineId;
-		String medicineName;
-		double medicinePrice;
-		int medicineCount;
-		double medicineReimbusement;
-		double medicineRatio;
-	}
-	class Account {
-		String patientName;
-		int patientId;
-		String time;
-		drug medicine[];
-		int success;
-		float firstTotal;
-		float finalTotal;
-		public Account(String time, float firstTotal, float finalTotal) {
-			this.time = time;
-			this.firstTotal = firstTotal;
-			this.finalTotal = finalTotal;
-		}
-	}
+//	class drug {
+//		int medicineId;
+//		String medicineName;
+//		double medicinePrice;
+//		int medicineCount;
+//		double medicineReimbusement;
+//		double medicineRatio;
+//	}
+//	class Account {
+//		String patientName;
+//		int patientId;
+//		String time;
+//		drug medicine[];
+//		int success;
+//		float firstTotal;
+//		float finalTotal;
+//		public Account(String time, float firstTotal, float finalTotal) {
+//			this.time = time;
+//			this.firstTotal = firstTotal;
+//			this.finalTotal = finalTotal;
+//		}
+//	}
 
 	public void drawLine(Canvas canvas, Account[] data) throws ParseException {
-		data = new Account[5];
-		data[0] = new Account("2014-12-06 15:02:00", 100, 50);
-		data[1] = new Account("2014-12-07 15:02:00", 110, 110);
-		data[2] = new Account("2014-12-09 15:02:00", 10, 10);
-		data[3] = new Account("2014-12-09 15:02:00", 20, 0);
-		data[4] = new Account("2014-12-19 15:02:00", 20, 0);
+		parseJson strToJson = new parseJson();
+		data = strToJson.parseSimpleAccount(mExampleString);
 		int paddingLeft = getPaddingLeft();
 		int paddingTop = getPaddingTop();
 		int paddingRight = getPaddingRight();
@@ -253,7 +253,7 @@ public class LineChartView extends View {
 
 		int contentWidth = getWidth() - paddingLeft - paddingRight;
 		int contentHeight = getHeight() - paddingTop - paddingBottom;
-		contentWidth -= 10;
+		contentWidth -= 70;
 		contentHeight -= 30;
 		float min_tot, max_tot;
 		Date min_date, max_date;
@@ -266,13 +266,13 @@ public class LineChartView extends View {
 		Paint paint = new Paint();
 		paint.setColor(Color.BLUE);
 		paint.setStrokeWidth(7);
-		paint.setStyle(Paint.Style.STROKE);
+		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		for (Account account:data) {
 			tmp = df.parse(account.time.substring(0,10));
 			if (tmp.before(min_date)) min_date = tmp;
 			if (tmp.after(max_date)) max_date = tmp;
-			if (account.firstTotal > max_tot) max_tot = account.firstTotal;
-			if (account.finalTotal < min_tot) min_tot = account.finalTotal;
+			if (account.firstTotal > max_tot) max_tot = (float)account.firstTotal;
+			if (account.finalTotal < min_tot) min_tot = (float)account.finalTotal;
 		}
 		int len = data.length;
 		int i = 0;
@@ -292,6 +292,14 @@ public class LineChartView extends View {
 				i++;
 			}
  		}
+		if (len == 1) {
+			canvas.drawCircle(10 + contentWidth / 2, contentHeight / 2, 5, paint);
+			paint.setStyle(Paint.Style.FILL);
+			paint.setTextSize(25);
+			paint.setColor(0xff00ffff);
+			canvas.drawText(data[0].time.substring(5, 10), 10 + contentWidth / 2 - paint.measureText(data[0].time.substring(5, 10)) / 2, contentHeight + 30, paint);
+			return;
+		}
 		DateTime min_datetime, max_datetime, tmp_datetime;
 		min_datetime = new DateTime(min_date);
 		max_datetime = new DateTime(max_date);
@@ -302,8 +310,8 @@ public class LineChartView extends View {
 			tmp = df.parse(data[i].time.substring(0,10));
 			tmp_datetime = new DateTime(tmp);
 			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = 10 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
-			float _y = contentHeight*(float)0.9 - (data[i].firstTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
+			float _x = 70 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			float _y = contentHeight*(float)0.9 - ((float)data[i].firstTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
 			if (x != 0 || y != 0) canvas.drawLine(x, y, _x, _y, paint);
 			x = _x;
 			y = _y;
@@ -315,16 +323,48 @@ public class LineChartView extends View {
                         new float[]{35,15,35,15}, 1);
         paint.setPathEffect(effects);
 		paint.setColor(Color.GREEN);
+		paint.setTextSize(30);
 		for (i = 0; i < len; i++) {
 			tmp = df.parse(data[i].time.substring(0,10));
 			tmp_datetime = new DateTime(tmp);
 			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = 10 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
-			float _y = contentHeight*(float)0.9 - (data[i].finalTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
+			float _x = 70 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			float _y = contentHeight*(float)0.9 - ((float)data[i].finalTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
 			if (x != 0 || y != 0) {Path path = new Path(); path.moveTo(x, y); path.lineTo(_x, _y); canvas.drawPath(path, paint);}
 			x = _x;
 			y = _y;
 			canvas.drawCircle(x, y, 5, paint);
+		}
+		paint.setStyle(Paint.Style.FILL);
+		contentHeight += 30;
+		paint.setColor(0xff00ffff);
+		paint.setTextSize(25);
+		float tot[];
+		tot = new float[len*2];
+		for (i = 0; i < len; i++) {
+			tot[i*2] = (float)data[i].finalTotal;
+			tot[i*2+1] = (float)data[i].firstTotal;
+			tmp = df.parse(data[i].time.substring(0,10));
+			tmp_datetime = new DateTime(tmp);
+			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
+			float _x = 70 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			if (i==0 || i==len-1 || Days.daysBetween(new DateTime(df.parse(data[i-1].time.substring(0,10))), tmp_datetime).getDays()*0.8*contentWidth/max_duration > paint.measureText(data[i].time.substring(5,10)) + 10)
+				canvas.drawText(data[i].time.substring(5,10), _x - paint.measureText(data[i].time.substring(5,10))/2, contentHeight, paint);
+		}
+		for (i = 0; i < len * 2 - 1; i++) {
+			for (int j = i + 1; j < len * 2; j++) {
+				if (tot[i] > tot[j]) {
+					tot[i] += tot[j];
+					tot[j] = tot[i] - tot[j];
+					tot[i] -= tot[j];
+				}
+			}
+		}
+		contentHeight -= 30;
+		for (i = 0; i < len * 2; i++) {
+			float _y = contentHeight*(float)0.9 - (tot[i] - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
+			if (i==0 || i==len*2-1 || (tot[i] - tot[i-1]) * contentHeight * (float)0.8 / (max_tot - min_tot) > 15)
+				canvas.drawText(Float.toString(tot[i]), 60 - paint.measureText(Float.toString(tot[i])), _y+(float)12.5, paint);
 		}
 	}
 }

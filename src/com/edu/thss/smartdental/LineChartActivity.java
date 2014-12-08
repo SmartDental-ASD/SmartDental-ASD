@@ -1,5 +1,6 @@
 package com.edu.thss.smartdental;
 
+import android.R.string;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,7 +12,10 @@ public class LineChartActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		String data = getIntent().getExtras().getString("data");
 		setContentView(R.layout.activity_line_chart);
+		LineChartView lcv = (LineChartView) findViewById(R.id.view1);
+	    lcv.mExampleString = data;
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_bg));
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 	}

@@ -31,7 +31,7 @@ public class ClassFragment extends Fragment {
 			public void onClick(View arg0) {
 				
 				Intent intent = new Intent(getActivity(), LineChartActivity.class);
-				intent.putExtra("data",ok.getText() );
+				intent.putExtra("data", "{\"bills\":[{\"id\":\"2\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-04 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]},{\"id\":\"3\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-05 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]}],\"success\":1}");
 				startActivityForResult(intent,REQUEST_CODE);
 			}});
 		
