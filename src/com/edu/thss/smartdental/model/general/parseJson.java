@@ -14,6 +14,7 @@ public class parseJson {
 		public int medicineCount;
 		public double medicineReimbusement;
 		public double medicineRatio;
+		public String medicineUnit;
 		public drug (){
 			medicineId = -1;
 			medicineName = "hello";
@@ -21,6 +22,7 @@ public class parseJson {
 			medicineCount = -1;
 			medicineReimbusement = -1.0;
 			medicineRatio = -1.0;
+			medicineUnit = "hello";
 		}
 	}
 	public class Account {
@@ -47,7 +49,7 @@ public class parseJson {
 	}
 	public parseJson() {}
 	public Account[] parseSimpleAccount(String accountInfo){
-		//String accountInfo = "{\"bills\":[{\"id\":\"2\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-04 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]}],\"success\":1}";
+		//String accountInfoo = "{\"bills\":[{\"id\":\"2\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-04 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]},{\"id\":\"3\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-04 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]}],\"success\":1}";
 		Account[] result;
 		try{
 			JSONObject account = new JSONObject(accountInfo);
@@ -77,6 +79,7 @@ public class parseJson {
 					result[j].medicine[i].medicinePrice = Double.parseDouble(drugs.getString("mprice"));
 					result[j].medicine[i].medicineReimbusement = Double.parseDouble(drugs.getString("mreimbusement"));
 					result[j].medicine[i].medicineRatio = Double.parseDouble(drugs.getString("mratio"));
+					result[j].medicine[i].medicineUnit = drugs.getString("munit");
 					result[j].firstTotal = result[j].firstTotal + result[j].medicine[i].medicineCount * result[j].medicine[i].medicinePrice;
 					result[j].finalTotal = result[j].finalTotal + result[j].medicine[i].medicineCount * (result[j].medicine[i].medicinePrice - result[j].medicine[i].medicineReimbusement);
 				}

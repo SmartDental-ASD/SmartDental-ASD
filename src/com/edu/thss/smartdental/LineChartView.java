@@ -292,17 +292,13 @@ public class LineChartView extends View {
 				i++;
 			}
  		}
-		if (len == 1) {
-			canvas.drawCircle(10 + contentWidth / 2, contentHeight / 2, 5, paint);
-			paint.setStyle(Paint.Style.FILL);
-			paint.setTextSize(25);
-			paint.setColor(0xff00ffff);
-			canvas.drawText(data[0].time.substring(5, 10), 10 + contentWidth / 2 - paint.measureText(data[0].time.substring(5, 10)) / 2, contentHeight + 30, paint);
-			return;
-		}
 		DateTime min_datetime, max_datetime, tmp_datetime;
 		min_datetime = new DateTime(min_date);
 		max_datetime = new DateTime(max_date);
+		if (len == 1) {
+			min_datetime = min_datetime.minusDays(1);
+			max_datetime = max_datetime.plusDays(1);
+		}
 		int max_duration = Days.daysBetween(min_datetime, max_datetime).getDays();
 		float x = 0;
 		float y = 0;
