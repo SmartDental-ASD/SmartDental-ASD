@@ -1,6 +1,5 @@
 package com.edu.thss.smartdental;
 
-import android.R.string;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;

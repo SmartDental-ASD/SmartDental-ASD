@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.R.bool;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -34,9 +33,6 @@ public class LineChartView extends View {
 	private Drawable mExampleDrawable;
 
 	private TextPaint mTextPaint;
-	private float mTextWidth;
-	private float mTextHeight;
-
 	public LineChartView(Context context) {
 		super(context);
 		init(null, 0);
@@ -86,10 +82,7 @@ public class LineChartView extends View {
 	private void invalidateTextPaintAndMeasurements() {
 		mTextPaint.setTextSize(mExampleDimension);
 		mTextPaint.setColor(mExampleColor);
-		mTextWidth = mTextPaint.measureText(mExampleString);
-
-		Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-		mTextHeight = fontMetrics.bottom;
+		mTextPaint.measureText(mExampleString);
 	}
 
 	@Override
