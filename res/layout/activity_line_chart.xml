@@ -60,10 +60,7 @@
         android:layout_height="fill_parent"
         android:layout_alignLeft="@+id/textView3"
         android:layout_below="@+id/textView2"
-        android:layout_marginTop="16dp"
-        app:exampleString="Hello, LineChartView"
-        app:exampleColor="#33b5e5"
-        app:exampleDimension="24sp" />
+        android:layout_marginTop="16dp" />
 
 </RelativeLayout>
 
