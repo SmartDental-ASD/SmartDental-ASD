@@ -28,4 +28,10 @@
    	    <item>住院</item>
    	    <item>其他</item>
    	</string-array>
+   	<string-array name="spinner_time_range">
+   	    <item>全部</item>
+   	    <item>最近3个月</item>
+   	    <item>最近半年</item>
+   	    <item>最近一年</item>
+   	</string-array>
 </resources>

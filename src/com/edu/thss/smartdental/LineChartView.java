@@ -238,7 +238,8 @@ public class LineChartView extends View {
 
 	public void drawLine(Canvas canvas, Account[] data) throws ParseException {
 		parseJson strToJson = new parseJson();
-		data = strToJson.parseSimpleAccount(mExampleString);
+		//data = strToJson.parseSimpleAccount(mExampleString);
+		data = strToJson.m_parseSimpleAccount(mExampleString);
 		int paddingLeft = getPaddingLeft();
 		int paddingTop = getPaddingTop();
 		int paddingRight = getPaddingRight();

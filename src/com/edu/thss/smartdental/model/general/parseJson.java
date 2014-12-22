@@ -93,4 +93,36 @@ public class parseJson {
 			return null;
 		}
 	}
+	public Account[] m_parseSimpleAccount(String accountInfo){
+		//String accountInfoo = "{\"bills\":[{\"id\":\"2\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-04 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]},{\"id\":\"3\",\"patient\":\"你大爷的！！\",\"time\":\"2014-12-04 10:50:23\",\"hospital\":\"校医院\",\"medicines\":[{\"mid\":\"1\",\"mcount\":\"15\",\"mname\":\"去你妹的！！！\",\"mprice\":\"10\",\"mreimbusement\":\"2\",\"mratio\":\"0.2\"}]}],\"success\":1}";
+		Account[] result;
+		try{
+			JSONObject account = new JSONObject(accountInfo);
+			
+			JSONArray bills = account.getJSONArray("bills");
+			result = new Account[bills.length()];
+			
+			for(int j = 0; j < bills.length(); j++){
+				result[j] = new Account();
+				JSONObject patient = bills.getJSONObject(j);
+				result[j].patientId = Integer.parseInt(patient.getString("id"));
+				result[j].patientName = patient.getString("patient");
+				result[j].time = patient.getString("time");
+				result[j].hospital = patient.getString("hospital");
+				//JSONArray medicines = patient.getJSONArray("medicines");
+				
+				//result[j].success = account.getInt("success");
+				//result[j].medicine = new drug[medicines.length()];
+				result[j].firstTotal = patient.getDouble("firstTotal");
+				result[j].finalTotal = patient.getDouble("finalTotal");
+			}
+			return result;
+		} 
+		catch (JSONException e){
+			System.out.println("Json parses error!");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }
