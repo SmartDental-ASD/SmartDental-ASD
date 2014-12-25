@@ -1,5 +1,7 @@
 package com.edu.thss.smartdental.model.general;
-
+import java.lang.String;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +48,42 @@ public class parseJson {
 			finalTotal = -1.0;
 			totalRatio = -1.0;
 		}
+		public Account[] searchAccountByHospital(Account[] list, String hospital)
+		{
+			int i;
+			Account[] result = new Account[list.length];
+			
+			for (i = 0; i < list.length; i++) {
+				if (list[i].hospital.indexOf(hospital) >= 0) {
+					result[i] = new Account();
+					result[i] = list[i];
+				}
+			}
+			return result;
+		}
+		public Account[] searchAccountByTime(Account[] list, int days) throws Exception
+		{
+			int i, j;
+			Account[] result = new Account[list.length];
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			Date date;
+			Date now = new Date();
+			now = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+
+			for (i = 0, j = 0; i < list.length; i++) {
+				date = sdf.parse(list[i].time);
+				if(date.after(now)){
+					result[j] = list[i];
+					j++;
+				}
+			}
+			return result;
+		}
+
+		
+
 	}
 	public parseJson() {}
 	public Account[] parseSimpleAccount(String accountInfo){
