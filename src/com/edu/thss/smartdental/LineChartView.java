@@ -4,9 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.R.anim;
-import android.R.integer;
-import android.R.string;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -15,8 +13,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -32,6 +28,11 @@ public class LineChartView extends View {
 	private String accountData;
 	private final static float canvasHeightOffset = 30;
 	private final static float canvasWidthOffset = 90;
+	private final static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private float min_tot, max_tot;
+	private DateTime min_datetime, max_datetime;
+	private int max_duration;
 	
 	public String getAccountData() {
 		return accountData; 
@@ -101,7 +102,7 @@ public class LineChartView extends View {
 		paint.setColor(0xff00ffff);
 		contentHeight -= canvasHeightOffset;
 		for (int i = 0; i < 5; i++) {
-			canvas.drawLine(canvasWidthOffset, contentHeight*(float)0.1+contentHeight*(float)0.2*i, contentWidth, contentHeight*(float)0.1+contentHeight*(float)0.2*i, paint);
+			canvas.drawLine(canvasWidthOffset, contentHeight * (float)0.1 + contentHeight * (float)0.2 * i, contentWidth, contentHeight * (float) 0.1 + contentHeight * (float)0.2 * i, paint);
 		}
 	}
 
@@ -117,49 +118,21 @@ public class LineChartView extends View {
 		int contentHeight = getHeight() - paddingTop - paddingBottom;
 		contentWidth -= canvasWidthOffset;
 		contentHeight -= canvasHeightOffset;
-		float min_tot, max_tot;
-		Date min_date, max_date;
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		max_date = df.parse("1899-12-31");
-		min_date = df.parse("2999-12-31");
-		min_tot = 1000000;
-		max_tot = 0;
-		Date tmp;
-		int len = data.length;
-		int i = 0;
-		for (i = 0; i < len; i++) {
-			Account account = data[i];
-			tmp = df.parse(account.time.substring(0,10));
-			if (tmp.before(min_date)) min_date = tmp;
-			if (tmp.after(max_date)) max_date = tmp;
-			if (account.firstTotal > max_tot) max_tot = (float)account.firstTotal;
-			if (account.finalTotal < min_tot) min_tot = (float)account.finalTotal;
-		}
-		DateTime min_datetime, max_datetime, tmp_datetime;
-		min_datetime = new DateTime(min_date);
-		max_datetime = new DateTime(max_date);
-		//check if only need to draw 1 point
-		if (len == 1) {
-			min_datetime = min_datetime.minusDays(1);
-			max_datetime = max_datetime.plusDays(1);
-		}
-		if (min_tot == max_tot) {
-			min_tot -= 1;
-			max_tot += 1;
-		}
-		int max_duration = Days.daysBetween(min_datetime, max_datetime).getDays();
+		setBound(data);
+
 		Paint paint = new Paint();
 		paint.setColor(Color.BLUE);
 		paint.setStrokeWidth(7);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
+		
 		float x = 0;
 		float y = 0;
+		int i;
+		int len = data.length;
 		for (i = 0; i < len; i++) {
-			tmp = df.parse(data[i].time.substring(0,10));
-			tmp_datetime = new DateTime(tmp);
-			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = canvasWidthOffset + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
-			float _y = contentHeight*(float)0.9 - ((float)data[i].firstTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
+			int duration = getDuration(data[i].time.substring(0, 10), min_datetime);
+			float _x = getCordinate(contentWidth * (float)0.8, (float)duration / max_duration, canvasWidthOffset + contentWidth * (float)0.1);
+			float _y = getCordinate(contentHeight * (float)0.8, (max_tot - (float)data[i].firstTotal) / (max_tot - min_tot), contentHeight * (float)0.1);
 			if (x != 0 || y != 0) canvas.drawLine(x, y, _x, _y, paint);
 			x = _x;
 			y = _y;
@@ -167,16 +140,14 @@ public class LineChartView extends View {
 		}
 		x = 0;
 		y = 0;
-        PathEffect effects = new DashPathEffect(new float[]{35,15,35,15}, 1);
+        PathEffect effects = new DashPathEffect(new float[] {35, 15, 35, 15}, 1);
         paint.setPathEffect(effects);
 		paint.setColor(Color.GREEN);
 		paint.setTextSize(30);
 		for (i = 0; i < len; i++) {
-			tmp = df.parse(data[i].time.substring(0,10));
-			tmp_datetime = new DateTime(tmp);
-			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = canvasWidthOffset + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
-			float _y = contentHeight*(float)0.9 - ((float)data[i].finalTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
+			int duration = getDuration(data[i].time.substring(0, 10), min_datetime);
+			float _x = getCordinate(contentWidth * (float)0.8, (float)duration / max_duration, canvasWidthOffset + contentWidth * (float)0.1);
+			float _y = getCordinate(contentHeight * (float)0.8, (max_tot - (float)data[i].finalTotal) / (max_tot - min_tot), contentHeight * (float)0.1);
 			if (x != 0 || y != 0) {
 				Path path = new Path(); 
 				path.moveTo(x, y); 
@@ -192,26 +163,24 @@ public class LineChartView extends View {
 		paint.setColor(0xff00ffff);
 		paint.setTextSize(25);
 		float tot[];
-		tot = new float[len*2];
+		tot = new float[len * 2];
 		for (i = 0; i < len; i++) {
 			tot[i*2] = (float)data[i].finalTotal;
 			tot[i*2+1] = (float)data[i].firstTotal;
-			tmp = df.parse(data[i].time.substring(0,10));
-			tmp_datetime = new DateTime(tmp);
-			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = canvasWidthOffset + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
-			if (i==1 && Days.daysBetween(min_datetime, tmp_datetime).getDays()*0.8*contentWidth/max_duration < paint.measureText(data[i].time.substring(5,10))*1.5 + 10) {
+			int duration = getDuration(data[i].time.substring(0, 10), min_datetime);
+			float _x = getCordinate(contentWidth * (float)0.8, (float)duration / max_duration, canvasWidthOffset + contentWidth * (float)0.1);
+			if (i == 1 && duration * 0.8 * contentWidth / max_duration < paint.measureText(data[i].time.substring(5, 10)) * 1.5 + 10) {
 				continue;
 			}
-			if (i==len-2 && Days.daysBetween(tmp_datetime, new DateTime(df.parse(data[i+1].time.substring(0,10)))).getDays()*0.8*contentWidth/max_duration < paint.measureText(data[i].time.substring(5,10))*1.5 + 10) {
+			if (i == len - 2 && getDuration(data[i].time.substring(0, 10), max_datetime) * 0.8 * contentWidth / max_duration < paint.measureText(data[i].time.substring(5, 10)) * 1.5 + 10) {
 				continue;
 			}
-			if (i==0 || i==len-1 || Days.daysBetween(new DateTime(df.parse(data[i-1].time.substring(0,10))), tmp_datetime).getDays()*0.8*contentWidth/max_duration > paint.measureText(data[i].time.substring(5,10)) + 10) {
-				if (i==0||i==len-1) {
-					canvas.drawText(data[i].time.substring(0,10), _x - paint.measureText(data[i].time.substring(0,10))/2, contentHeight, paint);
+			if (i == 0 || i == len - 1 || getDuration(data[i].time.substring(0, 10), data[i-1].time.substring(0, 10)) * 0.8 * contentWidth / max_duration > paint.measureText(data[i].time.substring(5, 10)) + 10) {
+				if (i == 0||i == len - 1) {
+					canvas.drawText(data[i].time.substring(0, 10), _x - paint.measureText(data[i].time.substring(0, 10)) / 2, contentHeight, paint);
 				}
 				else { 
-					canvas.drawText(data[i].time.substring(5,10), _x - paint.measureText(data[i].time.substring(5,10))/2, contentHeight, paint);
+					canvas.drawText(data[i].time.substring(5, 10), _x - paint.measureText(data[i].time.substring(5, 10)) / 2, contentHeight, paint);
 				}
 			}
 		}
@@ -241,12 +210,12 @@ public class LineChartView extends View {
 			}
  		}		
 		for (i = 0; i < len; i++) {
-			float _y = contentHeight*(float)0.9 - (tot[i] - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
-			if (i==len-2 && (tot[i+1] - tot[i]) * contentHeight * (float)0.8 / (max_tot - min_tot) < 30) {
+			float _y = getCordinate(contentHeight * (float)0.8, (max_tot - tot[i]) / (max_tot - min_tot), contentHeight * (float)0.1);
+			if (i == len - 2 && (tot[i+1] - tot[i]) * contentHeight * (float)0.8 / (max_tot - min_tot) < 30) {
 				continue;
 			}
-			if (i==0 || i==len-1 || (tot[i] - tot[i-1]) * contentHeight * (float)0.8 / (max_tot - min_tot) > 30) {
-				canvas.drawText(Float.toString(tot[i]), canvasWidthOffset - 10+ - paint.measureText(Float.toString(tot[i])), _y+(float)12.5, paint);
+			if (i == 0 || i == len - 1 || (tot[i] - tot[i-1]) * contentHeight * (float)0.8 / (max_tot - min_tot) > 30) {
+				canvas.drawText(Float.toString(tot[i]), canvasWidthOffset - 10 - paint.measureText(Float.toString(tot[i])), _y + (float)12.5, paint);
 			}
 		}
 	}
@@ -275,5 +244,51 @@ public class LineChartView extends View {
 			result[i] = data[i];
 		}
 		return result;
+	}
+
+	private void setBound(Account[] data) throws ParseException {
+		Date min_date, max_date;
+		max_date = df.parse("1899-12-31");
+		min_date = df.parse("2999-12-31");
+		min_tot = 1000000;
+		max_tot = 0;
+		Date tmp;
+		int len = data.length;
+		int i = 0;
+		for (i = 0; i < len; i++) {
+			Account account = data[i];
+			tmp = df.parse(account.time.substring(0,10));
+			if (tmp.before(min_date)) min_date = tmp;
+			if (tmp.after(max_date)) max_date = tmp;
+			if (account.firstTotal > max_tot) max_tot = (float)account.firstTotal;
+			if (account.finalTotal < min_tot) min_tot = (float)account.finalTotal;
+		}
+
+		min_datetime = new DateTime(min_date);
+		max_datetime = new DateTime(max_date);
+		//check if only need to draw 1 point
+		if (len == 1) {
+			min_datetime = min_datetime.minusDays(1);
+			max_datetime = max_datetime.plusDays(1);
+		}
+		if (min_tot == max_tot) {
+			min_tot -= 1;
+			max_tot += 1;
+		}
+		max_duration = Days.daysBetween(min_datetime, max_datetime).getDays();
+	}
+	
+	private int getDuration(String str, DateTime dt) throws ParseException {
+		int result = Days.daysBetween(dt, new DateTime(df.parse(str))).getDays();
+		return Math.abs(result);
+	}
+	
+	private int getDuration(String str1, String str2) throws ParseException {
+		int result = Days.daysBetween(new DateTime(df.parse(str1)), new DateTime(df.parse(str2))).getDays();
+		return Math.abs(result);
+	}
+	
+	private float getCordinate(float axisLength , float ratio, float offset) {
+		return offset + axisLength * ratio;
 	}
 }
