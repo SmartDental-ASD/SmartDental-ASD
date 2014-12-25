@@ -15,6 +15,8 @@ public class LineChartActivity extends Activity {
 		setContentView(R.layout.activity_line_chart);
 		LineChartView lcv = (LineChartView) findViewById(R.id.view1);
 	    lcv.setAccountData(data);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_bg));
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 	}
@@ -37,4 +39,12 @@ public class LineChartActivity extends Activity {
 //		}
 //		return super.onOptionsItemSelected(item);
 //	}
+	@Override  
+	public boolean onOptionsItemSelected(MenuItem item) {  
+	    switch (item.getItemId()) {  
+	    case android.R.id.home:  
+	    	finish();  
+	    }  
+	    return true;
+	}  
 }

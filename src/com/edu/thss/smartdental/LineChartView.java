@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.R.anim;
 import android.R.integer;
 import android.R.string;
 import android.content.Context;
@@ -29,6 +30,8 @@ import com.edu.thss.smartdental.model.general.parseJson.Account;
  */
 public class LineChartView extends View {
 	private String accountData;
+	private final static float canvasHeightOffset = 30;
+	private final static float canvasWidthOffset = 90;
 	
 	public String getAccountData() {
 		return accountData; 
@@ -90,15 +93,15 @@ public class LineChartView extends View {
 		Paint paint = new Paint();
 		paint.setColor(0xff00ffff);
 		paint.setStrokeWidth(5);
-		canvas.drawLine(90, 0, 90, contentHeight, paint);
-		canvas.drawLine(90, 0, 80, 15, paint);
-		canvas.drawLine(90, 0, 100, 15, paint);
-		canvas.drawLine(90, contentHeight - 30, contentWidth, contentHeight - 30, paint);
+		canvas.drawLine(canvasWidthOffset, 0, canvasWidthOffset, contentHeight, paint);
+		canvas.drawLine(canvasWidthOffset, 0, canvasWidthOffset - 10, 15, paint);
+		canvas.drawLine(canvasWidthOffset, 0, canvasWidthOffset + 10, 15, paint);
+		canvas.drawLine(canvasWidthOffset, contentHeight - canvasHeightOffset, contentWidth, contentHeight - canvasHeightOffset, paint);
 		paint.setStrokeWidth(3);
 		paint.setColor(0xff00ffff);
-		contentHeight -= 30;
+		contentHeight -= canvasHeightOffset;
 		for (int i = 0; i < 5; i++) {
-			canvas.drawLine(90, contentHeight*(float)0.1+contentHeight*(float)0.2*i, contentWidth, contentHeight*(float)0.1+contentHeight*(float)0.2*i, paint);
+			canvas.drawLine(canvasWidthOffset, contentHeight*(float)0.1+contentHeight*(float)0.2*i, contentWidth, contentHeight*(float)0.1+contentHeight*(float)0.2*i, paint);
 		}
 	}
 
@@ -112,8 +115,8 @@ public class LineChartView extends View {
 
 		int contentWidth = getWidth() - paddingLeft - paddingRight;
 		int contentHeight = getHeight() - paddingTop - paddingBottom;
-		contentWidth -= 90;
-		contentHeight -= 30;
+		contentWidth -= canvasWidthOffset;
+		contentHeight -= canvasHeightOffset;
 		float min_tot, max_tot;
 		Date min_date, max_date;
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -122,10 +125,6 @@ public class LineChartView extends View {
 		min_tot = 1000000;
 		max_tot = 0;
 		Date tmp;
-		Paint paint = new Paint();
-		paint.setColor(Color.BLUE);
-		paint.setStrokeWidth(7);
-		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		int len = data.length;
 		int i = 0;
 		for (i = 0; i < len; i++) {
@@ -149,13 +148,17 @@ public class LineChartView extends View {
 			max_tot += 1;
 		}
 		int max_duration = Days.daysBetween(min_datetime, max_datetime).getDays();
+		Paint paint = new Paint();
+		paint.setColor(Color.BLUE);
+		paint.setStrokeWidth(7);
+		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		float x = 0;
 		float y = 0;
 		for (i = 0; i < len; i++) {
 			tmp = df.parse(data[i].time.substring(0,10));
 			tmp_datetime = new DateTime(tmp);
 			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = 90 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			float _x = canvasWidthOffset + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
 			float _y = contentHeight*(float)0.9 - ((float)data[i].firstTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
 			if (x != 0 || y != 0) canvas.drawLine(x, y, _x, _y, paint);
 			x = _x;
@@ -172,7 +175,7 @@ public class LineChartView extends View {
 			tmp = df.parse(data[i].time.substring(0,10));
 			tmp_datetime = new DateTime(tmp);
 			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = 90 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			float _x = canvasWidthOffset + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
 			float _y = contentHeight*(float)0.9 - ((float)data[i].finalTotal - min_tot) / (max_tot - min_tot) * contentHeight * (float)0.8;
 			if (x != 0 || y != 0) {
 				Path path = new Path(); 
@@ -185,7 +188,7 @@ public class LineChartView extends View {
 			canvas.drawCircle(x, y, 5, paint);
 		}
 		paint.setStyle(Paint.Style.FILL);
-		contentHeight += 30;
+		contentHeight += canvasHeightOffset;
 		paint.setColor(0xff00ffff);
 		paint.setTextSize(25);
 		float tot[];
@@ -196,7 +199,7 @@ public class LineChartView extends View {
 			tmp = df.parse(data[i].time.substring(0,10));
 			tmp_datetime = new DateTime(tmp);
 			int duration = Days.daysBetween(min_datetime, tmp_datetime).getDays();
-			float _x = 90 + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
+			float _x = canvasWidthOffset + (float)0.1*contentWidth+(float)0.8*contentWidth*duration/max_duration;
 			if (i==1 && Days.daysBetween(min_datetime, tmp_datetime).getDays()*0.8*contentWidth/max_duration < paint.measureText(data[i].time.substring(5,10))*1.5 + 10) {
 				continue;
 			}
@@ -221,7 +224,7 @@ public class LineChartView extends View {
 				}
 			}
 		}
-		contentHeight -= 30;
+		contentHeight -= canvasHeightOffset;
 		len *= 2;
 		i = 0;
 		while (i < len - 1) {
@@ -243,7 +246,7 @@ public class LineChartView extends View {
 				continue;
 			}
 			if (i==0 || i==len-1 || (tot[i] - tot[i-1]) * contentHeight * (float)0.8 / (max_tot - min_tot) > 30) {
-				canvas.drawText(Float.toString(tot[i]), 80 - paint.measureText(Float.toString(tot[i])), _y+(float)12.5, paint);
+				canvas.drawText(Float.toString(tot[i]), canvasWidthOffset - 10+ - paint.measureText(Float.toString(tot[i])), _y+(float)12.5, paint);
 			}
 		}
 	}
@@ -273,5 +276,4 @@ public class LineChartView extends View {
 		}
 		return result;
 	}
-	
 }
